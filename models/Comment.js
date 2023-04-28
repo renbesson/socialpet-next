@@ -1,0 +1,27 @@
+////////////////////////////////////////////////////////////////////////////////
+// Define Mongoose
+////////////////////////////////////////////////////////////////////////////////
+const { model, models, Schema } = require("mongoose");
+
+////////////////////////////////////////////////////////////////////////////////
+// Creates the Comment schema
+////////////////////////////////////////////////////////////////////////////////
+const commentSchema = new Schema(
+  {
+    ownerId: { type: Schema.Types.ObjectId, ref: "Pet", require: true },
+    postId: { type: Schema.Types.ObjectId, ref: "Post", require: true },
+    content: { type: String, require: true, minLength: 1, maxLength: 250 },
+    likedBy: [{ type: Schema.Types.ObjectId, ref: "Pet" }],
+    comments: [{ type: Schema.Types.ObjectId, ref: "Comment" }],
+  },
+  { timestamps: true }
+);
+
+////////////////////////////////////////////////////////////////////////////////
+// Creates a virtual that returns the total of reactions
+////////////////////////////////////////////////////////////////////////////////
+commentSchema.virtual("likes").get(function () {
+  return this.likedBy.length;
+});
+
+export default models.Pet || model("Pet", commentSchema);
